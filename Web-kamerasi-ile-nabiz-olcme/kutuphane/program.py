@@ -122,10 +122,7 @@ class findFaceGetPulse(object):
                                                   cv2.COLOR_BGR2GRAY))
         col = (100, 255, 100)
         if self.find_faces:
-            cv2.putText(
-                self.frame_out, "Press 'C' to change camera (current: %s)" % str(
-                    cam),
-                (10, 25), cv2.FONT_HERSHEY_PLAIN, 1.25, col)
+           
             cv2.putText(
                 self.frame_out, "Press 'S' to lock face and begin",
                        (10, 50), cv2.FONT_HERSHEY_PLAIN, 1.25, col)
