@@ -151,7 +151,7 @@ class getPulseApp(object):
         detected.
         """
 
-        self.pressed = waitKey(10) & 255  # wait for keypress for 10 ms
+        self.pressed = waitKey(10) & 255  # wait for keypress for 10 saniye
         if self.pressed == 27:  # exit program on 'esc'
             print("Exiting")
             for cam in self.cameras:
