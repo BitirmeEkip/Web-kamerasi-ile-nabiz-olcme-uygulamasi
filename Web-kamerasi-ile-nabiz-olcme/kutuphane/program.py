@@ -37,7 +37,7 @@ class findFaceGetPulse(object):
         self.t0 = time.time()
         self.bpms = []
         self.bpm = 0
-        dpath = resource_path("haarcascade_frontalface_alt.xml")
+        dpath = resource_path(cv2.data.haarcascades + "haarcascade_frontalface_alt.xml")
         if not os.path.exists(dpath):
             print("Cascade file not present!")
         self.face_cascade = cv2.CascadeClassifier(dpath)
@@ -134,7 +134,7 @@ class findFaceGetPulse(object):
             self.data_buffer, self.times, self.trained = [], [], False
             detected = list(self.face_cascade.detectMultiScale(self.gray,
                                                                scaleFactor=1.3,
-                                                               minNeighbors=4,
+                                                                   minNeighbors=4,
                                                                minSize=(
                                                                    50, 50),
                                                                flags=cv2.CASCADE_SCALE_IMAGE))
