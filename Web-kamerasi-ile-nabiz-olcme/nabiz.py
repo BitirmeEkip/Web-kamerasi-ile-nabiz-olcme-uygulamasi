@@ -1,4 +1,4 @@
-from kutuphane.cihaz import Camera
+from kutuphane.kamera import Camera
 from kutuphane.program import findFaceGetPulse
 from kutuphane.interface import plotXY, imshow, waitKey, destroyWindow
 from cv2 import moveWindow
