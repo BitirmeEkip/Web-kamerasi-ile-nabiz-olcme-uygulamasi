@@ -156,10 +156,7 @@ class findFaceGetPulse(object):
             return
         if set(self.face_rect) == set([1, 1, 2, 2]):
             return
-        cv2.putText(
-            self.frame_out, "Press 'C' to change camera (current: %s)" % str(
-                cam),
-            (10, 25), cv2.FONT_HERSHEY_PLAIN, 1.25, col)
+        
         cv2.putText(
             self.frame_out, "Press 'S' to restart",
                    (10, 50), cv2.FONT_HERSHEY_PLAIN, 1.5, col)
