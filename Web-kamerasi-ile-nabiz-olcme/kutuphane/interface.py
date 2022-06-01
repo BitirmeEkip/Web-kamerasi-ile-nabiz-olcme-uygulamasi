@@ -9,6 +9,12 @@ If desired, an alternative UI could be built and imported into get_pulse.py
 instead. Opencv is used to perform much of the data analysis, but there is no
 reason it has to be used to handle the UI as well. It just happens to be very
 effective for our purposes.
+
+Bazı arabirimleri opencv kullanıcı arabirimi yöntemlerine (görüntü çerçevelerini görüntüleme, olay işleme, vb.) sarar.
+
+İstenirse, bunun yerine alternatif bir kullanıcı arayüzü oluşturulabilir ve get_pulse.py'ye aktarılabilir. 
+Opencv, veri analizinin çoğunu gerçekleştirmek için kullanılır, ancak kullanıcı arayüzünü işlemek için de 
+kullanılmasına gerek yoktur. Sadece amaçlarımız için çok etkili oluyor.
 """
 def resize(*args, **kwargs):
     return cv2.resize(*args, **kwargs)
@@ -33,11 +39,18 @@ cv2.imshow to do real-time data plotting and handle user interaction.
 
 This is entirely independent of the data calculation functions, so it can be 
 replaced in the get_pulse.py application easily.
+
+Bu dosyanın geri kalanı, bazı GUI çizim işlevlerini tanımlar. Python'da basit x-y veri çizimleri yapmanın birçok 
+başka yolu vardır, ancak bu uygulama gerçek zamanlı veri çizimi yapmak ve kullanıcı etkileşimini yönetmek için 
+cv2.imshow'u kullanır.
+
+Bu, veri hesaplama işlevlerinden tamamen bağımsızdır, bu nedenle get_pulse.py uygulamasında kolayca değiştirilebilir.
 """
 
 
 def combine(left, right):
     """Stack images horizontally.
+    görüntüleri yatay olarak istifleyin.
     """
     h = max(left.shape[0], right.shape[0])
     w = left.shape[1] + right.shape[1]
@@ -50,6 +63,7 @@ def combine(left, right):
     comb = np.zeros(tuple(shape),left.dtype)
     
     # left will be on left, aligned top, with right on right
+    # sol solda, üstte hizalı, sağda olacak
     comb[:left.shape[0],:left.shape[1]] = left
     comb[:right.shape[0],left.shape[1]:] = right
     

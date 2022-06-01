@@ -8,8 +8,9 @@ import sys
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
+    #Kaynağa mutlak yol alın, geliştirici ve PyInstaller için çalışır.
     try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        # PyInstaller geçici bir klasör oluşturur ve yolunu _MEIPASS'ta saklar
         base_path = sys._MEIPASS
     except Exception:
         base_path = os.path.abspath(".")
@@ -120,18 +121,19 @@ class findFaceGetPulse(object):
         self.frame_out = self.frame_in
         self.gray = cv2.equalizeHist(cv2.cvtColor(self.frame_in,
                                                   cv2.COLOR_BGR2GRAY))
-        col = (100, 255, 100)
+        col = (255, 255, 255)
         if self.find_faces:
            
-            cv2.putText(
-                self.frame_out, "Press 'S' to lock face and begin",
+            cv2.putText(self.frame_out, "Baslamak icin 'S' tusuna basin.",                
+                       (10, 25), cv2.FONT_HERSHEY_PLAIN, 1.25, col)
+            cv2.putText(self.frame_out, "Olcum ekrani icin 'D' tusuna basin.",                
                        (10, 50), cv2.FONT_HERSHEY_PLAIN, 1.25, col)
-            cv2.putText(self.frame_out, "Press 'Esc' to quit",
+            cv2.putText(self.frame_out, "Cikis icin 'ESC' tusuna basin.",
                        (10, 75), cv2.FONT_HERSHEY_PLAIN, 1.25, col)
             self.data_buffer, self.times, self.trained = [], [], False
             detected = list(self.face_cascade.detectMultiScale(self.gray,
                                                                scaleFactor=1.3,
-                                                                   minNeighbors=4,
+                                                                     minNeighbors=4,
                                                                minSize=(
                                                                    50, 50),
                                                                flags=cv2.CASCADE_SCALE_IMAGE))

@@ -5,8 +5,8 @@ from cv2 import moveWindow
 import argparse
 import numpy as np
 import datetime
-#TODO: work on serial port comms, if anyone asks for it
-#from serial import Serial
+#TODO: work on serial port comms, if anyone asks for it from serial import Serial
+#Seri ithalattan herhangi biri isterse, seri port iletişimleri üzerinde çalışın Serial
 import socket
 import sys
 
@@ -18,11 +18,13 @@ class getPulseApp(object):
 
     Then the average green-light intensity in the forehead region is gathered
     over time, and the detected person's pulse is estimated.
+    Bir web kamerası akışında bir yüz bulan ve ardından alnı izole eden Python uygulaması.
+Daha sonra alın bölgesindeki ortalama yeşil ışık şiddeti zamanla toplanır ve tespit edilen kişinin nabzı tahmin edilir.
     """
 
     def __init__(self, args):
-        # Imaging device - must be a connected camera (not an ip camera or mjpeg
-        # stream)
+        # Imaging device - must be a connected camera (not an ip camera or mjpeg stream)
+        # Görüntüleme cihazı - bağlı bir kamera olmalıdır (ip kamera veya mjpeg akışı değil)
         serial = args.serial
         baud = args.baud
         self.send_serial = False
@@ -73,7 +75,7 @@ class getPulseApp(object):
 
         # Init parameters for the cardiac data plot
         self.bpm_plot = False
-        self.plot_title = "Data display - raw signal (top) and PSD (bottom)"
+        self.plot_title = "Data display - raw signal (top) ve PSD (bottom)"
 
         # Maps keystrokes to specified methods
         #(A GUI window must have focus for these to work)
@@ -92,35 +94,34 @@ class getPulseApp(object):
 
     def write_csv(self):
         """
-        Writes current data to a csv file
+        Geçerli verileri bir csv dosyasına yazar
         """
-        fn = "Webcam-pulse" + str(datetime.datetime.now())
+        fn = "Webcam-nabiz" + str(datetime.datetime.now())
         fn = fn.replace(":", "_").replace(".", "_")
         data = np.vstack((self.processor.times, self.processor.samples)).T
         np.savetxt(fn + ".csv", data, delimiter=',')
-        print("Writing csv")
+        print("csv yazma")
 
     def toggle_search(self):
         """
-        Toggles a motion lock on the processor's face detection component.
-
-        Locking the forehead location in place significantly improves
-        data quality, once a forehead has been sucessfully isolated.
+        İşlemcinin yüz algılama bileşeninde bir hareket kilidini açar veya kapatır.
+Alın konumunun yerinde kilitlenmesi, bir alın başarılı bir şekilde izole edildikten sonra veri kalitesini önemli ölçüde artırır.
         """
         #state = self.processor.find_faces.toggle()
         state = self.processor.find_faces_toggle()
-        print("face detection lock =", not state)
+        print("yuz algilama kilidi =", not state)
 
     def toggle_display_plot(self):
         """
         Toggles the data display.
+        Veri gösterimini değiştirir.
         """
         if self.bpm_plot:
-            print("bpm plot disabled")
+            print("bpm plot devre disi")
             self.bpm_plot = False
             destroyWindow(self.plot_title)
         else:
-            print("bpm plot enabled")
+            print("bpm plot etkinlestirildi")
             if self.processor.find_faces:
                 self.toggle_search()
             self.bpm_plot = True
@@ -130,6 +131,7 @@ class getPulseApp(object):
     def make_bpm_plot(self):
         """
         Creates and/or updates the data display
+        Veri görüntüsünü oluşturur ve/veya günceller
         """
         plotXY([[self.processor.times,
                  self.processor.samples],
@@ -149,10 +151,12 @@ class getPulseApp(object):
 
         A plotting or camera frame window must have focus for keypresses to be
         detected.
+        __init__() öğesinin altında ayarlandığı gibi tuş vuruşlarını işleme
+Tuşa basmaların algılanması için bir çizim veya kamera çerçevesi penceresinin odak olması gerekir.
         """
 
-        self.pressed = waitKey(10) & 255  # wait for keypress for 10 saniye
-        if self.pressed == 27:  # exit program on 'esc'
+        self.pressed = waitKey(10) & 255  # 10 saniye tuşa basılmasını bekleyin
+        if self.pressed == 27:  # 'esc' ile programdan çık
             print("Exiting")
             for cam in self.cameras:
                 cam.cam.release()
@@ -167,25 +171,27 @@ class getPulseApp(object):
     def main_loop(self):
         """
         Single iteration of the application's main loop.
+        Uygulamanın ana döngüsünün tek yinelemesi.
         """
         # Get current image frame from the camera
+        # Kameradan geçerli görüntü çerçevesini alın.
         frame = self.cameras[self.selected_cam].get_frame()
         self.h, self.w, _c = frame.shape
 
-        # display unaltered frame
+        # display unaltered frame / değiştirilmemiş çerçeveyi göster
         # imshow("Original",frame)
 
-        # set current image frame to the processor's input
+        # set current image frame to the processor's input / mevcut görüntü çerçevesini işlemcinin girişine ayarla
         self.processor.frame_in = frame
-        # process the image frame to perform all needed analysis
+        # process the image frame to perform all needed analysis /gerekli tüm analizleri gerçekleştirmek için görüntü çerçevesini işleyin
         self.processor.run(self.selected_cam)
-        # collect the output frame for display
+        # collect the output frame for display / görüntü için çıktı çerçevesini topla
         output_frame = self.processor.frame_out
 
-        # show the processed/annotated output frame
+        # show the processed/annotated output frame / işlenmiş/açıklamalı çıktı çerçevesini göster
         imshow("Processed", output_frame)
 
-        # create and/or update the raw data display if needed
+        # create and/or update the raw data display if needed / gerekirse ham veri görüntüsünü oluşturun ve/veya güncelleyin
         if self.bpm_plot:
             self.make_bpm_plot()
 
@@ -195,17 +201,17 @@ class getPulseApp(object):
         if self.send_udp:
             self.sock.sendto(str(self.processor.bpm), self.udp)
 
-        # handle any key presses
+        # handle any key presses / herhangi bir tuşa basmak
         self.key_handler()
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Webcam pulse detector.')
+    parser = argparse.ArgumentParser(description='Webcam nabız dedektoru.')
     parser.add_argument('--serial', default=None,
-                        help='serial port destination for bpm data')
+                        help='bpm verileri için seri bağlantı noktası hedefi')
     parser.add_argument('--baud', default=None,
-                        help='Baud rate for serial transmission')
+                        help='Seri iletim için baud hızı')
     parser.add_argument('--udp', default=None,
-                        help='udp address:port destination for bpm data')
+                        help='udp adresi:bpm verileri için bağlantı noktası hedefi')
 
     args = parser.parse_args()
     App = getPulseApp(args)
